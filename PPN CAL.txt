@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator PPN</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #ppn-rate-text {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .menu {
+            margin-top: 20px;
+        }
+
+        .menu button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .menu button:hover {
+            background-color: #218838;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        #ppn-result, #total-result {
+            font-weight: bold;
+        }
+
+        #ppn-result {
+            color: #f39c12;
+        }
+
+        #total-result {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Kalkulator PPN</h1>
+            <div id="ppn-rate-text">Tarif PPN: 11%</div>
+            <div class="menu">
+                <button onclick="setPPNRate(0.11)">PPN 11%</button>
+                <button onclick="setPPNRate(0.011)">PPN 1.1%</button>
+            </div>
+        </header>
+
+        <section>
+            <div class="input-container">
+                <label for="dpp">Nilai DPP (Rp):</label>
+                <input type="text" id="dpp" placeholder="Masukkan Nilai DPP" oninput="formatRupiah()">
+            </div>
+            <button onclick="calculatePPN()">Hitung PPN</button>
+
+            <div id="result">
+                <p id="ppn-result"></p>
+                <p id="total-result"></p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let ppnRate = 0.11;
+
+        // Fungsi untuk mengubah tarif PPN
+        function setPPNRate(rate) {
+            ppnRate = rate;
+            const ppnRateText = document.getElementById('ppn-rate-text');
+            if (ppnRate === 0.11) {
+                ppnRateText.textContent = "Tarif PPN: 11%";
+            } else {
+                ppnRateText.textContent = "Tarif PPN: 1.1%";
+            }
+
+            // Recalculate jika ada input DPP
+            const dpp = document.getElementById('dpp').value;
+            if (dpp) {
+                calculatePPN();
+            }
+        }
+
+        // Fungsi untuk memformat input menjadi format Rupiah
+        function formatRupiah() {
+            let dppInput = document.getElementById('dpp');
+            let value = dppInput.value.replace(/\D/g, "");  // Hapus karakter non-numeric
+            dppInput.value = formatCurrency(value);
+        }
+
+        // Fungsi untuk memformat angka ke format mata uang Indonesia
+        function formatCurrency(value) {
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Fungsi untuk menghitung PPN dan total
+        function calculatePPN() {
+            const dppInput = document.getElementById('dpp');
+            const dpp = dppInput.value.replace(/\./g, ''); // Hapus titik untuk perhitungan
+            if (!dpp || isNaN(dpp)) {
+                alert("Silakan masukkan nilai DPP terlebih dahulu!");
+                return;
+            }
+
+            const ppn = dpp * ppnRate;
+            const total = parseInt(dpp) + ppn;
+
+            // Tampilkan hasil
+            const ppnResult = document.getElementById('ppn-result');
+            const totalResult = document.getElementById('total-result');
+            ppnResult.textContent = `PPN: Rp. ${formatCurrency(ppn.toFixed(0))}`;
+            totalResult.textContent = `Total (DPP + PPN): Rp. ${formatCurrency(total.toFixed(0))}`;
+        }
+    </script>
+
+</body>
+</html>
